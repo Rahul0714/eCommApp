@@ -1,8 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/painting.dart';
+import 'package:tryouts/components/auth.dart';
+import 'package:tryouts/pages/login_page.dart';
 import '../components/horizontal_listview.dart';
 import '../components/Products.dart';
 import 'cart.dart';
@@ -125,6 +126,14 @@ class _HomePageState extends State<HomePage> {
               child: ListTile(
                 title: Text('About'),
                 leading: Icon(Icons.help,color: Colors.blue,),
+              ),
+            ),
+            InkWell(
+              onTap:()=> signOutWithGoogle().whenComplete(() =>
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginPage()))),
+              child: ListTile(
+                title: Text('LogOut'),
+                leading: Icon(Icons.cancel,color: Colors.blue,),
               ),
             )
           ],

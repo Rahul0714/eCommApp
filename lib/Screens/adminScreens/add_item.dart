@@ -28,6 +28,7 @@ class _AddItemState extends State<AddItem> {
     const Item('Electronics',Icon(Icons.shopping_basket)),
     const Item('Others',Icon(Icons.shopping_bag)),
   ];
+  Item newValue = Item("Fresh",Icon(Icons.shopping_bag)); 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,24 +53,44 @@ class _AddItemState extends State<AddItem> {
                     SizedBox(height: MediaQuery.of(context).size.height/25),
                     Row(
                       children: [
-                        Text("Category:",style: TextStyle(fontSize: 20.0),),
-                        DropdownButton<Item>(
-                          items: products.map<DropdownMenuItem<Item>>((product){
-                            return DropdownMenuItem<Item>(
-                              value: product,
-                              child: Row(children: [
-                              product.icon,
-                              SizedBox(width: 10.0,),
-                              Text(product.name),
-                            ],));
-                          }).toList(), 
-                          onChanged: (Item newValue){
-                            print(newValue.name);
-                            setState(() {
-                              newValue = newValue;
-                              category = newValue.name;
-                            });
-                          },
+                        Row(
+                          children: [
+                            SizedBox(width:5.0),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal:5.0),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(color: Colors.black),
+                                  left: BorderSide(color: Colors.black),
+                                  right: BorderSide(color: Colors.black),
+                                  bottom: BorderSide(color: Colors.black),
+                                  )
+                              ),
+                              child: DropdownButton<Item>(
+                                items: products.map<DropdownMenuItem<Item>>((product){
+                                  return DropdownMenuItem<Item>(
+                                    value: product,
+                                    child: Row(children: [
+                                    product.icon,
+                                    SizedBox(width: 10.0,),
+                                    Text(product.name),
+                                  ],),);
+                                }).toList(), 
+                                onChanged: (Item value){
+                                  print(value.name);
+                                  setState(() {
+                                    newValue = value;
+                                    category = newValue.name;
+                                  });
+                                },
+                              ),
+                            ),
+                            SizedBox(width:21.0),
+                            RichText(text: TextSpan(children: [
+                              TextSpan(text:newValue.name,style: TextStyle(fontSize: 21.0)),
+                              WidgetSpan(child: newValue.icon),
+                            ])),
+                          ],
                         ),
                       ],
                     ),

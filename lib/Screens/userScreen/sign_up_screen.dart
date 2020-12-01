@@ -1,7 +1,7 @@
 import 'package:e_comm/Auth/services.dart';
-import 'package:e_comm/Screens/auth_decide_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'auth_decide_screen.dart';
 import 'sign_in_phone_screen.dart';
 
 class SignUp extends StatefulWidget {

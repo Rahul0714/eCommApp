@@ -1,7 +1,8 @@
+import 'package:e_comm/model/profile.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
-import 'Screens/intro_screen.dart';
+import 'package:provider/provider.dart';
+import 'Screens/userScreen/intro_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,9 +14,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home:NavigateUser(),
+    return ChangeNotifierProvider(
+      create: (_)=>Profile(),
+          child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home:NavigateUser(),
+      ),
     );
   }
 }

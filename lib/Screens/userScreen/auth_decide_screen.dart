@@ -1,9 +1,9 @@
 import 'package:e_comm/Screens/adminScreens/welcomeScreen.dart';
-import 'package:e_comm/Screens/sign_in_phone_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'home_screen.dart';
+import 'sign_in_phone_screen.dart';
 import 'sign_up_screen.dart';
 
 class AuthDecide extends StatefulWidget {
@@ -119,7 +119,7 @@ class _AuthDecideState extends State<AuthDecide> {
                     onPressed: (){
                       Navigator.push(context, MaterialPageRoute(builder: (context)=>PhoneSignIn()));
                     },
-                    child: Text("Connect With Phone",style: TextStyle(color: Colors.white,fontSize: 19.0),),
+                    child: Text("Log In Phone",style: TextStyle(color: Colors.white,fontSize: 19.0),),
                     color: Colors.orangeAccent,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
                     ),),

@@ -1,6 +1,10 @@
+import 'dart:io';
 import 'package:e_comm/Auth/services.dart';
+import 'package:e_comm/model/profile.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class AdminProfile extends StatefulWidget {
   @override
@@ -8,30 +12,34 @@ class AdminProfile extends StatefulWidget {
 }
 
 class _AdminProfileState extends State<AdminProfile> {
-  PickedFile _img;
   final ImagePicker _picker = ImagePicker();
   String imgPath;
-  String adminName;
-  String adminEmail;
+  String adminName,adminEmail;
   TextEditingController _adminNameController = TextEditingController();
   TextEditingController _adminEmailController = TextEditingController();
 
-  imgFromCamera() async {
-    _img = await _picker.getImage(source: ImageSource.camera);  
+  Future<String> imgFromCamera() async {
+    var img = await _picker.getImage(source: ImageSource.camera);
+    File file = File(img.path);
+    FirebaseStorage.instance.refFromURL('gs://e-commerce-app-1fbb6.appspot.com')
+    .child('image/admin.jpg').putFile(file);
+
+    imgPath = await FirebaseStorage.instance.refFromURL('gs://e-commerce-app-1fbb6.appspot.com/')
+    .child('image/admin.jpg').getDownloadURL();
+    return imgPath;
     }
 
-  imgFromGallery()  async{
-    _img = await _picker.getImage(source: ImageSource.gallery);
+  Future<String> imgFromGallery()  async{
+    var img = await _picker.getImage(source: ImageSource.gallery);
+    File file = File(img.path);
+    FirebaseStorage.instance.refFromURL('gs://e-commerce-app-1fbb6.appspot.com')
+    .child('image/admin.jpg').putFile(file);
+
+    imgPath = await FirebaseStorage.instance.refFromURL('gs://e-commerce-app-1fbb6.appspot.com/')
+    .child('image/admin.jpg').getDownloadURL();
+    return imgPath;
   }
 
-  Future<void> uploadImg() async {
-    
-  }
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,39 +49,58 @@ class _AdminProfileState extends State<AdminProfile> {
           children: <Widget>[
             Text("Change Profile",style: TextStyle(fontSize: 25.0),),
             SizedBox(height: MediaQuery.of(context).size.height/9,),
-          CircleAvatar(
-            radius: 100.0,
-            child: Image(image: AssetImage("images/bunny_monochromatic.png"),),
-            ),
+          Consumer<Profile>(
+            builder: (context,profile,child)=>CircleAvatar(
+              radius: 100.0,
+              backgroundImage: profile.img!=null?NetworkImage(profile.img):AssetImage('images/bunny_monochromatic.png'),
+              ),
+          ),
           IconButton(icon: Icon(Icons.camera_alt), onPressed: (){
-            showDialog(context: context,
-            builder: (_)=>AlertDialog(
-              title: Text("Choose a Source"),
-              actions: <Widget>[
-                FlatButton(onPressed: (){
-                    imgFromCamera();
-                    Navigator.of(context).pop();
-                    uploadImg();
-                }, child: Text("Camera")),
-                FlatButton(onPressed: (){
-                    imgFromGallery();
-                    Navigator.of(context).pop();
-                    uploadImg();
-                }, child: Text("Gallery")),
-              ],
-            ),);
-          }),
+              showDialog(context: context,
+              builder: (_)=>AlertDialog(
+                title: Text("Choose a Source"),
+                actions: <Widget>[
+                  Consumer<Profile>(
+                    builder: (context,profile,child)=>FlatButton(onPressed: ()async {
+                        profile.changeProfile(await imgFromCamera());
+                        adminCollection.doc(profile.name).set({
+                          'name':profile.name,
+                          'email':profile.email,
+                          'image': profile.img, 
+                        });
+                        Navigator.of(context).pop();
+                    }, child: Text("Camera")),
+                  ),
+                  Consumer<Profile>(
+                    builder: (context,profile,child)=>FlatButton(onPressed: ()async{
+                        profile.changeProfile(await imgFromGallery());
+                        adminCollection.doc(profile.name).set({
+                          'name':profile.name,
+                          'email':profile.email,
+                          'image': profile.img,
+                        });
+                        Navigator.of(context).pop();
+                    }, child: Text("Gallery"),
+                    ),
+                  ),
+                ],
+              ),);
+            }),
           Column(
             children: [
-              Text(adminName==null?"Admin_Name":adminName,style: TextStyle(
-                fontSize: 17.0,
-                decoration: TextDecoration.underline,
-              ),),
+              Consumer<Profile>(
+                builder: (context,profile,child)=>Text(profile.name==null?"Admin_Name"
+                :profile.name,style: TextStyle(fontSize: 17.0,
+                  decoration: TextDecoration.underline,
+                ),),
+              ),
               SizedBox(height: 20.0,),
-              Text(adminEmail==null?"admin@gmail.com":adminEmail,style: TextStyle(
-                fontSize: 17.0,
-                decoration: TextDecoration.underline,
-              ),),
+              Consumer<Profile>(
+                builder: (context,profile,child)=>Text(profile.email==null?"admin@gmail.com"
+                :profile.email,style: TextStyle(fontSize: 17.0,
+                  decoration: TextDecoration.underline,
+                ),),
+              ),
               SizedBox(height: 20.0,),
           FlatButton(onPressed: (){
             showDialog(context: context,
@@ -101,19 +128,18 @@ class _AdminProfileState extends State<AdminProfile> {
                 ],),
               ),
               actions: <Widget>[
-                FlatButton(onPressed: (){
-                  if(_adminEmailController!=null && _adminNameController!=null){
-                    adminCollection.doc(_adminNameController.text).set({
-                      'name':_adminNameController.text,
-                      'email':_adminEmailController.text,
-                    });
-                    Navigator.of(context).pop();
-                  }
-                  setState(() {
-                    adminName = _adminNameController.text;
-                    adminEmail = _adminEmailController.text;
-                  });
-                }, child: Text("Save"))
+                Consumer<Profile>(
+                  builder: (context,profile,child)=> FlatButton(onPressed: (){
+                    if(_adminEmailController!=null && _adminNameController!=null){
+                      adminCollection.doc(profile.name).set({
+                        'name':_adminNameController.text,
+                        'email':_adminEmailController.text,
+                      });
+                      Navigator.of(context).pop();
+                    }
+                    profile.changeValues(_adminNameController.text, _adminEmailController.text);
+                  }, child: Text("Save")),
+                )
               ],
             ),);
           }, child: Text("Edit"),

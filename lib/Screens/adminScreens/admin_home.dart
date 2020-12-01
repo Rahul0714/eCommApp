@@ -1,6 +1,9 @@
 import 'package:e_comm/Screens/adminScreens/add_item.dart';
 import 'package:e_comm/Screens/adminScreens/change_item.dart';
+import 'package:e_comm/model/profile.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 
 import 'admin_profile.dart';
 
@@ -20,14 +23,20 @@ class _AdminHomeState extends State<AdminHome> {
       drawer: Drawer(
         child:ListView(
           children: [
-            new UserAccountsDrawerHeader(
-              accountName:Text("Admin_Name"), 
-              accountEmail: Text("admin@gmail.com"),
-              currentAccountPicture: CircleAvatar(
-                radius: 70.0,
-                backgroundColor: Colors.white,
-                backgroundImage: AssetImage("images/bunny_monochromatic.png"),
-              ),),
+            Consumer<Profile>(
+              builder: (context,profile,child)=>UserAccountsDrawerHeader(
+                accountName:Text(profile.name==null?"Admin_Name"
+                :profile.name), 
+                accountEmail: Text(profile.email==null?"Admin_Name"
+                :profile.email),
+                currentAccountPicture: Consumer<Profile>(
+                  builder: (context,profile,child)=>CircleAvatar(
+                    radius: 70.0,
+                    backgroundColor: Colors.white,
+                    backgroundImage: NetworkImage(profile.img),
+                  ),
+                ),),
+            ),
             SizedBox(height: MediaQuery.of(context).size.height/25,),
             ListTile(
                 leading: Icon(Icons.add),

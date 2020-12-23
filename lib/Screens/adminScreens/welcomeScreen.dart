@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_comm/Screens/adminScreens/admin_home.dart';
-import 'package:e_comm/model/profile.dart';
+import 'package:e_comm/Screens/adminScreens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

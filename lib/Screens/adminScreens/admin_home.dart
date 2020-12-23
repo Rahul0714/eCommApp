@@ -1,6 +1,6 @@
 import 'package:e_comm/Screens/adminScreens/add_item.dart';
 import 'package:e_comm/Screens/adminScreens/change_item.dart';
-import 'package:e_comm/model/profile.dart';
+import 'package:e_comm/Screens/adminScreens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

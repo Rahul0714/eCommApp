@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:e_comm/Auth/services.dart';
-import 'package:e_comm/model/profile.dart';
+import 'package:e_comm/Screens/adminScreens/profile.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -49,12 +49,12 @@ class _AdminProfileState extends State<AdminProfile> {
           children: <Widget>[
             Text("Change Profile",style: TextStyle(fontSize: 25.0),),
             SizedBox(height: MediaQuery.of(context).size.height/9,),
-          Consumer<Profile>(
-            builder: (context,profile,child)=>CircleAvatar(
+          
+            CircleAvatar(
               radius: 100.0,
-              backgroundImage: profile.img!=null?NetworkImage(profile.img):AssetImage('images/bunny_monochromatic.png'),
+              backgroundImage: AssetImage('images/bunny_monochromatic.png'),
               ),
-          ),
+          
           IconButton(icon: Icon(Icons.camera_alt), onPressed: (){
               showDialog(context: context,
               builder: (_)=>AlertDialog(
